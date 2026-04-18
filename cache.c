@@ -21,23 +21,23 @@
 
 int main(){
 
-	int pageSize, pages, slots, rand;
-
+	int pageLength, uniquePages, slots, rand;
+	char* pageLetters = {"ABCDEFGHIJKLMNO"};
 
 	printf("Enter page reference pattern length: ");
-	scanf("%d", &pageSize);
-	while(pageSize > 100 || pageSize < 10){
+	scanf("%d", &pageLength);
+	while(pageLength > 100 || pageLength < 10){
 		printf("Invalid input\n");
 		printf("Enter page reference pattern length: ");
-		scanf("%d", &pageSize);
+		scanf("%d", &pageLength);
 	}
 
 	printf("Enter number of unique pages: ");
-	scanf("%d", &pages);
-	while(pages > 15 || pages < 2){
+	scanf("%d", &uniquePages);
+	while(uniquePages > 15 || uniquePages < 2){
 		printf("Invalid input\n");
 		printf("Enter number of unique pages: ");
-		scanf("%d", &pages);
+		scanf("%d", &uniquePages);
 	}
 
 	printf("Enter number of slots: ");
