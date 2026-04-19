@@ -7,8 +7,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-
-
+#include <string.h>
 
 typedef struct{
 char* currentMemory;
@@ -20,19 +19,36 @@ pageFrames pageFramesInit(int slots, int patternLength){
 	char[patternLength] pattern;
 	pageFrames frame;
 
-	for(int i = 0; i < slots; ++i){
+	for(int i = 0; i < slots; ++i)
 		memory[i] = ' ';
-	}
-	for(int i = 0; i < patternLength; ++i){
+	for(int i = 0, i < pattern; ++i)
 		pattern[i] = ' ';
-	}
 	frame.currentMemory = memory;
 	frame.referencePattern = pattern;
 	return frame;
 }
 
+void patternInit(pageFrames *frame, char[] bank){
+	int size = sizeof(frame->referencePattern)/sizeof(frame->referencePattern[0]);
+	
+	for(int i = 0; i < size; ++i){
+		int k = (rand() % size);
+		frame->referencePattern[i] = bank[k];
+	}
+}
+
+char[] bankReturn(char[] letters, int uniquePages){
+	char[uniquePages] bank;
+	for(int i = 0; i < uniquePages; ++i){
+		bank[i] = letters[i];
+	}
+	return bank;
+}
 
 int[] FIFO(pageFrames Frame){
+
+
+
 
 }
 
@@ -58,16 +74,16 @@ int[] RAND(pageFrames Frame){
 
 int main(){
 
-	int pageLength, uniquePages, slots, rand;
+	int patternLength, uniquePages, slots, rand;
 	char[] pageLetters = {"ABCDEFGHIJKLMNO"};
 	pageFrames mainPage;
 
 	printf("Enter page reference pattern length: ");
-	scanf("%d", &pageLength);
-	while(pageLength > 100 || pageLength < 10){
+	scanf("%d", &patternLength);
+	while(patternLength > 100 || patternLength < 10){
 		printf("Invalid input\n");
 		printf("Enter page reference pattern length: ");
-		scanf("%d", &pageLength);
+		scanf("%d", &patternLength);
 	}
 
 	printf("Enter number of unique pages: ");
@@ -89,21 +105,39 @@ int main(){
 	printf("Enter a seed: ");
 	scanf("%d", &rand);
 
+	char[] useableLetters = bankReturn(pageLetters, uniquePages);
+
 	srand(rand);
 
-	mainPage = pageFramesInit();
+	mainPage = pageFramesInit(slots, patternLength);
+	patternInit(&mainPage, useableLetters)
+
+	FIFO(mainPage);
 	
-	FIFO();
+	mainPage = pageFramesInit(slots, patternLength);
+	patternInit(&mainPage, useableLetters)
 	
-	LRU();
+	LRU(mainPage);
 
-	LFU();
+	mainPage = pageFramesInit(slots, patternLength);
+	patternInit(&mainPage, useableLetters)
+	
+	LFU(mainPage);
 
-	MIN();
+	mainPage = pageFramesInit(slots, patternLength);
+	patternInit(&mainPage, useableLetters)
+	
+	MIN(mainPage);
 
-	MRU();
+	mainPage = pageFramesInit(slots, patternLength);
+	patternInit(&mainPage, useableLetters)
+	
+	MRU(mainPage);
 
-	RAND();
+	mainPage = pageFramesInit(slots, patternLength);
+	patternInit(&mainPage, useableLetters)
+	
+	RAND(mainPage);
 
 
 	return 0;
