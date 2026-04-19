@@ -45,30 +45,67 @@ char[] bankReturn(char[] letters, int uniquePages){
 	return bank;
 }
 
-int[] FIFO(pageFrames Frame){
+int FIFO(pageFrames frame){
+	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
 
+	printf("Ref Str: ");
+	for(int i = 0; i < size; ++i){
+		printf("%c ", frame.referencePattern[i]);
+	}
+
+}
+
+int LRU(pageFrames frame){
+	
+	printf("Ref Str: ");
+	for(int i = 0; i < size; ++i){
+		printf("%c ", frame.referencePattern[i]);
+	}
 
 
 
 }
 
-int[] LRU(pageFrames Frame){
+int LFU(pageFrames frame){
+
+	printf("Ref Str: ");
+	for(int i = 0; i < size; ++i){
+		printf("%c ", frame.referencePattern[i]);
+	}
+	printf("\n");
+
+	
+
 
 }
 
-int[] LFU(pageFrames Frame){
+int MIN(pageFrames frame){
+
+	printf("Ref Str: ");
+	for(int i = 0; i < size; ++i){
+		printf("%c ", frame.referencePattern[i]);
+	}
+
 
 }
 
-int[] MIN(pageFrames Frame){
+int MRU(pageFrames frame){
+
+	printf("Ref Str: ");
+	for(int i = 0; i < size; ++i){
+		printf("%c ", frame.referencePattern[i]);
+	}
+
 
 }
 
-int[] MRU(pageFrames Frame){
+int RAND(pageFrames frame){
 
-}
+	printf("Ref Str: ");
+	for(int i = 0; i < size; ++i){
+		printf("%c ", frame.referencePattern[i]);
+	}
 
-int[] RAND(pageFrames Frame){
 
 }
 
