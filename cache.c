@@ -15,20 +15,22 @@ char* referencePattern;
 } pageFrames;
 
 pageFrames pageFramesInit(int slots, int patternLength){
-	char[slots] memory;
-	char[patternLength] pattern;
+	char memory[slots] ;
+	char pattern[patternLength];
 	pageFrames frame;
 
-	for(int i = 0; i < slots; ++i)
+	for(int i = 0; i < slots; ++i){
 		memory[i] = ' ';
-	for(int i = 0, i < pattern; ++i)
+	}
+	for(int i = 0; i < patternLength; ++i){
 		pattern[i] = ' ';
+	}
 	frame.currentMemory = memory;
 	frame.referencePattern = pattern;
 	return frame;
 }
 
-void patternInit(pageFrames *frame, char[] bank){
+void patternInit(pageFrames *frame, char bank[]){
 	int size = sizeof(frame->referencePattern)/sizeof(frame->referencePattern[0]);
 	
 	for(int i = 0; i < size; ++i){
@@ -37,8 +39,8 @@ void patternInit(pageFrames *frame, char[] bank){
 	}
 }
 
-char[] bankReturn(char[] letters, int uniquePages){
-	char[uniquePages] bank;
+char[] bankReturn(char letters[], int uniquePages){
+	char bank[uniquePages];
 	for(int i = 0; i < uniquePages; ++i){
 		bank[i] = letters[i];
 	}
@@ -56,7 +58,8 @@ int FIFO(pageFrames frame){
 }
 
 int LRU(pageFrames frame){
-	
+	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
+
 	printf("Ref Str: ");
 	for(int i = 0; i < size; ++i){
 		printf("%c ", frame.referencePattern[i]);
@@ -67,6 +70,7 @@ int LRU(pageFrames frame){
 }
 
 int LFU(pageFrames frame){
+	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
 
 	printf("Ref Str: ");
 	for(int i = 0; i < size; ++i){
@@ -80,6 +84,7 @@ int LFU(pageFrames frame){
 }
 
 int MIN(pageFrames frame){
+	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
 
 	printf("Ref Str: ");
 	for(int i = 0; i < size; ++i){
@@ -90,6 +95,7 @@ int MIN(pageFrames frame){
 }
 
 int MRU(pageFrames frame){
+	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
 
 	printf("Ref Str: ");
 	for(int i = 0; i < size; ++i){
@@ -100,6 +106,7 @@ int MRU(pageFrames frame){
 }
 
 int RAND(pageFrames frame){
+	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
 
 	printf("Ref Str: ");
 	for(int i = 0; i < size; ++i){
@@ -112,7 +119,7 @@ int RAND(pageFrames frame){
 int main(){
 
 	int patternLength, uniquePages, slots, rand;
-	char[] pageLetters = {"ABCDEFGHIJKLMNO"};
+	char pageLetters[] = {"ABCDEFGHIJKLMNO"};
 	pageFrames mainPage;
 
 	printf("Enter page reference pattern length: ");
@@ -142,40 +149,39 @@ int main(){
 	printf("Enter a seed: ");
 	scanf("%d", &rand);
 
-	char[] useableLetters = bankReturn(pageLetters, uniquePages);
+	char useableLetters[] = bankReturn(pageLetters, uniquePages);
 
 	srand(rand);
 
 	mainPage = pageFramesInit(slots, patternLength);
-	patternInit(&mainPage, useableLetters)
+	patternInit(&mainPage, useableLetters);
 
 	FIFO(mainPage);
 	
 	mainPage = pageFramesInit(slots, patternLength);
-	patternInit(&mainPage, useableLetters)
+	patternInit(&mainPage, useableLetters);
 	
 	LRU(mainPage);
 
 	mainPage = pageFramesInit(slots, patternLength);
-	patternInit(&mainPage, useableLetters)
+	patternInit(&mainPage, useableLetters);
 	
 	LFU(mainPage);
 
 	mainPage = pageFramesInit(slots, patternLength);
-	patternInit(&mainPage, useableLetters)
+	patternInit(&mainPage, useableLetters);
 	
 	MIN(mainPage);
 
 	mainPage = pageFramesInit(slots, patternLength);
-	patternInit(&mainPage, useableLetters)
+	patternInit(&mainPage, useableLetters);
 	
 	MRU(mainPage);
 
 	mainPage = pageFramesInit(slots, patternLength);
-	patternInit(&mainPage, useableLetters)
+	patternInit(&mainPage, useableLetters);
 	
 	RAND(mainPage);
-
 
 	return 0;
 }
