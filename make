@@ -12,4 +12,4 @@ cache.o: cache.c
 
 
 clean:
-	rm -f *.o $(TARGET)
+	rm  $(TARGET)
