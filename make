@@ -2,14 +2,14 @@ CC = gcc
 
 TARGET = cache
 
-all: $(TARGET)
+$(TARGET): $(TARGET)
 
 $(TARGET): cache.o
-	$(CC) -o $(TARGET) cache.o
+	$(CC) -o3 $(TARGET) cache.o
 
 cache.o: cache.c
 	$(CC) -c cache.c
 
 
 clean:
-	rm  $(TARGET)
+	rm cache

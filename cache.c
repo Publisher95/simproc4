@@ -39,8 +39,8 @@ void patternInit(pageFrames *frame, char bank[]){
 	}
 }
 
-char[] bankReturn(char letters[], int uniquePages){
-	char bank[uniquePages];
+char* bankReturn(char letters[], int uniquePages){
+	char *bank = malloc(sizeof(char)*uniquePages);
 	for(int i = 0; i < uniquePages; ++i){
 		bank[i] = letters[i];
 	}
@@ -49,11 +49,13 @@ char[] bankReturn(char letters[], int uniquePages){
 
 int FIFO(pageFrames frame){
 	int size = sizeof(frame.referencePattern)/sizeof(frame.referencePattern[0]);
+	char *line1, *line2, *line3;
 
 	printf("Ref Str: ");
 	for(int i = 0; i < size; ++i){
 		printf("%c ", frame.referencePattern[i]);
 	}
+	
 
 }
 
@@ -149,7 +151,7 @@ int main(){
 	printf("Enter a seed: ");
 	scanf("%d", &rand);
 
-	char useableLetters[] = bankReturn(pageLetters, uniquePages);
+	char *useableLetters = bankReturn(pageLetters, uniquePages);
 
 	srand(rand);
 
@@ -183,5 +185,6 @@ int main(){
 	
 	RAND(mainPage);
 
+	free(useableLetters);
 	return 0;
 }
