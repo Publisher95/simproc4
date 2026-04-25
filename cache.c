@@ -160,30 +160,48 @@ int main(){
 
 	FIFO(mainPage);
 	
+	free(mainPage.currentMemory);
+    free(mainPage.referencePattern);
+	
 	mainPage = pageFramesInit(slots, patternLength);
 	patternInit(&mainPage, useableLetters);
 	
 	LRU(mainPage);
+	
+	free(mainPage.currentMemory);
+    free(mainPage.referencePattern);
 
 	mainPage = pageFramesInit(slots, patternLength);
 	patternInit(&mainPage, useableLetters);
 	
 	LFU(mainPage);
+	
+	free(mainPage.currentMemory);
+    free(mainPage.referencePattern);
 
 	mainPage = pageFramesInit(slots, patternLength);
 	patternInit(&mainPage, useableLetters);
 	
 	MIN(mainPage);
+	
+	free(mainPage.currentMemory);
+    free(mainPage.referencePattern);
 
 	mainPage = pageFramesInit(slots, patternLength);
 	patternInit(&mainPage, useableLetters);
 	
 	MRU(mainPage);
+	
+	free(mainPage.currentMemory);
+    free(mainPage.referencePattern);
 
 	mainPage = pageFramesInit(slots, patternLength);
 	patternInit(&mainPage, useableLetters);
 	
 	RAND(mainPage);
+	
+	free(mainPage.currentMemory);
+    free(mainPage.referencePattern);
 
 	free(useableLetters);
 	return 0;
