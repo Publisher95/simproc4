@@ -1,6 +1,6 @@
 CC = gcc 
 
-all:
+all: cache.o
 	$(CC) -o cache cache.o
 
 cache.o: cache.c
