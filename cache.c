@@ -47,9 +47,11 @@ char* runAlgorithm(Algorithm algo) {
 		printf("Memory allocation error.");
 		return NULL;
 	}
+	int fill = 0;
 	// Algo specific setup:
 	switch (algo) {
 		case FIFO:
+			fill = 0;
 			break;
 		case LRU:
 			break;
@@ -63,12 +65,28 @@ char* runAlgorithm(Algorithm algo) {
 			break;
 	}
 	for (int i = 0; i < patternLength; i++) {
+		printf("%s\n",referencePattern);
+		printf("%s\n",hits);
+		printf("SLOTS: %s\n",slots);
 		pageIndex = checkHit(referencePattern[i],slots);
 		switch (algo) {
 			case FIFO:
 				if (pageIndex == -1) {
 					hits[i] = '-';
-					//manage
+					//manage / replace
+					if (fill < slotCount) {
+						slots[fill] = referencePattern[i];
+						fill++;
+					} else {
+						// FIFO Shift array
+						// 12345
+						// 23451
+						for (int is = 0; is < (slotCount-1); is++) {
+							slots[is] = slots[is+1];
+						}
+						// Set last element to missing page
+						slots[slotCount-1] = referencePattern[i];
+					}
 				} else {
 					hits[i] = '+';
 				}
@@ -128,13 +146,15 @@ int main() {
 		referencePattern[i] = 'A' + (rand() % uniquePages);
 	}
 
-	//// here
+
 	hitBuffer = runAlgorithm(FIFO);
-	hitBuffer = runAlgorithm(LRU);
-	hitBuffer = runAlgorithm(LFU);
-	hitBuffer = runAlgorithm(MIN);
-	hitBuffer = runAlgorithm(MRU);
-	hitBuffer = runAlgorithm(RAND);
+	printf("%s\n",referencePattern);
+	printf("%s\n",hitBuffer);
+	//hitBuffer = runAlgorithm(LRU);
+	//hitBuffer = runAlgorithm(LFU);
+	//hitBuffer = runAlgorithm(MIN);
+	//hitBuffer = runAlgorithm(MRU);
+	//hitBuffer = runAlgorithm(RAND);
 
 	free(referencePattern);
 	free(hitBuffer);
