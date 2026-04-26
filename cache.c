@@ -297,11 +297,47 @@ int main() {
 	}
 
 	runBuffer dataFIFO = runAlgorithm(FIFO);
+	int countFIFO = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataFIFO.hits[i] == '+') {
+			countFIFO++;
+		}
+	}
 	runBuffer dataLRU = runAlgorithm(LRU);
+	int countLRU = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataLRU.hits[i] == '+') {
+			countLRU++;
+		}
+	}
 	runBuffer dataLFU = runAlgorithm(LFU);
+	int countLFU = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataLFU.hits[i] == '+') {
+			countLFU++;
+		}
+	}
 	runBuffer dataMRU = runAlgorithm(MRU);
+	int countMRU = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataMRU.hits[i] == '+') {
+			countMRU++;
+		}
+	}
 	runBuffer dataMIN = runAlgorithm(MIN);
+	int countMIN = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataMIN.hits[i] == '+') {
+			countMIN++;
+		}
+	}
 	runBuffer dataRAND = runAlgorithm(RAND);
+	int countRAND = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataRAND.hits[i] == '+') {
+			countRAND++;
+		}
+	}
 	
 	int terminalWidth = getTerminalWidth() - 10; // Subtract space for names?
 	int sectionCount = (patternLength + ((10+(terminalWidth))/2) - 1) / ((10+(terminalWidth))/2);
@@ -470,6 +506,14 @@ int main() {
 		}
 		printf("\n\n");
 	}
+
+	printf("Cache Hit Rates:\n");
+	printf("FIFO : %d / %d = %f\n",countFIFO,patternLength,(double)((double)countFIFO/(double)patternLength));
+	printf("LRU  : %d / %d = %f\n",countLRU,patternLength,(double)((double)countLRU/(double)patternLength));
+	printf("LFU  : %d / %d = %f\n",countLFU,patternLength,(double)((double)countLFU/(double)patternLength));
+	printf("MRU  : %d / %d = %f\n",countMRU,patternLength,(double)((double)countMRU/(double)patternLength));
+	printf("MIN  : %d / %d = %f\n",countMIN,patternLength,(double)((double)countMIN/(double)patternLength));
+	printf("RAND : %d / %d = %f\n",countRAND,patternLength,(double)((double)countRAND/(double)patternLength));
 
 	free(referencePattern);
 	free(hitBuffer);
