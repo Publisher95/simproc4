@@ -51,6 +51,18 @@ int indexLRU(char* slots, int startIndex) {
 	return 0;
 }
 
+int indexMRU(char* slots, int startIndex) {
+	for (int i = startIndex-1; i >= 0; i++) {
+		for (int si = 0; si < slotCount; si++) {
+			if (slots[si] == referencePattern[i]) {
+				return si;
+			}
+		}
+	}
+	// This should never happen.
+	return 0;
+}
+
 char* runAlgorithm(Algorithm algo) {
 	int pageIndex = -1;
 	char *slots = (char *)malloc(slotCount*sizeof(char));
@@ -68,32 +80,7 @@ char* runAlgorithm(Algorithm algo) {
 		slots[i] = '\0'; // Make sure to clear
 		useTicks[i] = 0;
 	}
-	// Algo specific setup:
-	printf("Running ");
-	switch (algo) {
-		case FIFO:
-			printf("FIFO:\n");
-			break;
-		case LRU:
-			printf("LRU:\n");
-			break;
-		case LFU:
-			printf("LFU:\n");
-			break;
-		case MIN:
-			printf("MIN:\n");
-			break;
-		case MRU:
-			printf("MRU:\n");
-			break;
-		case RAND:
-			printf("RAND:\n");
-			break;
-	}
 	for (int i = 0; i < patternLength; i++) {
-		printf("%s\n",referencePattern);
-		printf("%s\n",hits);
-		printf("SLOTS: %s\n",slots);
 		pageIndex = checkHit(referencePattern[i],slots);
 		switch (algo) {
 			case FIFO:
@@ -141,7 +128,6 @@ char* runAlgorithm(Algorithm algo) {
 							}
 						}
 						int replaceIndex = indexLRU(slotsCopy, i); // Break ties using LRU
-						printf("Replace index %d\n", replaceIndex);
 						slots[replaceIndex] = referencePattern[i];
 						useTicks[replaceIndex] = 1;
 						// One horrid way to do this would be to run indexLRU but with a custom slot array containing ONLY the ties, This is what we think we have done.
@@ -171,6 +157,19 @@ char* runAlgorithm(Algorithm algo) {
 			case MIN:
 				break;
 			case MRU:
+				if (pageIndex == -1) {
+					hits[i] = '-';
+					//manage / replace
+					if (fill < slotCount) {
+						slots[fill] = referencePattern[i];
+						fill++;
+					} else {
+						// Replace
+						slots[indexMRU(slots,i)] = referencePattern[i];
+					}
+				} else {
+					hits[i] = '+';
+				}
 				break;
 			case RAND:
 				break;
@@ -221,16 +220,10 @@ int main() {
 
 
 	hitBuffer = runAlgorithm(FIFO);
-	printf("%s\n",referencePattern);
-	printf("%s\n",hitBuffer);
 	hitBuffer = runAlgorithm(LRU);
-	printf("%s\n",referencePattern);
-	printf("%s\n",hitBuffer);
 	hitBuffer = runAlgorithm(LFU);
-	printf("%s\n",referencePattern);
-	printf("%s\n",hitBuffer);
+	hitBuffer = runAlgorithm(MRU);
 	//hitBuffer = runAlgorithm(MIN);
-	//hitBuffer = runAlgorithm(MRU);
 	//hitBuffer = runAlgorithm(RAND);
 
 	free(referencePattern);
