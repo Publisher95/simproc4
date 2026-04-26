@@ -128,14 +128,25 @@ char* runAlgorithm(Algorithm algo) {
 					} else {
 						// 12345
 						int lowest = patternLength; // Theoretical max if every single char was a reference.
-						int lowestIndex = -1;
+						char *slotsCopy = (char *)malloc(slotCount*sizeof(char));
 						for (int fi = 0; fi < fill; fi++) {
-							if (slots[fi] = lowest) {
-								// Break tie using LRU
-							} else if (slots[fi] < lowest) {
-								// Norm
+							slotsCopy[fi] = '\0';
+							if(useTicks[fi] < lowest) {
+								lowest = useTicks[fi];
 							}
 						}
+						for (int fi = 0; fi < fill; fi++) {
+							if(useTicks[fi] = lowest) {
+								slotsCopy[fi] = slots[fi];
+							}
+						}
+						int replaceIndex = indexLRU(slotsCopy, i); // Break ties using LRU
+						printf("Replace index %d\n", replaceIndex);
+						slots[replaceIndex] = referencePattern[i];
+						useTicks[replaceIndex] = 1;
+						// One horrid way to do this would be to run indexLRU but with a custom slot array containing ONLY the ties, This is what we think we have done.
+
+						free(slotsCopy);
 					}
 				} else {
 					hits[i] = '+';
@@ -212,10 +223,10 @@ int main() {
 	hitBuffer = runAlgorithm(FIFO);
 	printf("%s\n",referencePattern);
 	printf("%s\n",hitBuffer);
-	//hitBuffer = runAlgorithm(LFU);
-	//printf("%s\n",referencePattern);
-	//printf("%s\n",hitBuffer);
 	hitBuffer = runAlgorithm(LRU);
+	printf("%s\n",referencePattern);
+	printf("%s\n",hitBuffer);
+	hitBuffer = runAlgorithm(LFU);
 	printf("%s\n",referencePattern);
 	printf("%s\n",hitBuffer);
 	//hitBuffer = runAlgorithm(MIN);
