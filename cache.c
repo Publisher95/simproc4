@@ -13,6 +13,30 @@
 #define MAX_PAGES 15
 #define MAX_SLOTS 12
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/ioctl.h>
+#include <unistd.h>
+#endif
+
+// As per assignment requirements we need to manage line wrap of slotCount + 1 lines so we need terminal width...
+int getTerminalWidth() {
+#ifdef _WIN32
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+		return csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	}
+	return 80; // fallback
+#else
+	struct winsize w;
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == 0) {
+		return w.ws_col;
+	}
+	return 80; // fallback
+#endif
+}
+
 // Global data
 typedef enum {
 	FIFO,
@@ -22,6 +46,11 @@ typedef enum {
 	MRU,
 	RAND
 } Algorithm;
+
+typedef struct {
+	char *hits;
+	char **slotHistory;
+} runBuffer;
 
 char pageLetters[] = "ABCDEFGHIJKLMNO";
 int patternLength, uniquePages, slotCount, seed;
@@ -63,17 +92,19 @@ int indexMRU(char* slots, int startIndex) {
 	return 0;
 }
 
-char* runAlgorithm(Algorithm algo) {
+runBuffer runAlgorithm(Algorithm algo) {
 	int pageIndex = -1;
 	char *slots = (char *)malloc(slotCount*sizeof(char));
 	int *useTicks = (int *)malloc(slotCount*sizeof(int));
-	char *hits = (char *)malloc(patternLength*sizeof(char));
-	if (hits == NULL || slots == NULL || useTicks == NULL) {
+	runBuffer algoData;
+	algoData.hits = (char *)malloc(patternLength*sizeof(char));
+	algoData.slotHistory = malloc(patternLength*sizeof(char*));
+	if (algoData.hits == NULL || algoData.slotHistory == NULL || slots == NULL || useTicks == NULL) {
 		printf("Memory allocation error.");
-		return NULL;
 	}
 	for (int i = 0; i < patternLength; i++) {
-		hits[i] = '\0';
+		algoData.slotHistory[i] = (char *)malloc(slotCount*sizeof(char));
+		algoData.hits[i] = '\0';
 	}
 	int fill = 0;
 	for (int i = 0; i < slotCount; i++) {
@@ -85,15 +116,13 @@ char* runAlgorithm(Algorithm algo) {
 		switch (algo) {
 			case FIFO:
 				if (pageIndex == -1) {
-					hits[i] = '-';
+					algoData.hits[i] = '-';
 					//manage / replace
 					if (fill < slotCount) {
 						slots[fill] = referencePattern[i];
 						fill++;
 					} else {
 						// FIFO Shift array
-						// 12345
-						// 23451
 						for (int is = 0; is < (slotCount-1); is++) {
 							slots[is] = slots[is+1];
 						}
@@ -101,12 +130,12 @@ char* runAlgorithm(Algorithm algo) {
 						slots[slotCount-1] = referencePattern[i];
 					}
 				} else {
-					hits[i] = '+';
+					algoData.hits[i] = '+';
 				}
 				break;
 			case LFU:
 				if (pageIndex == -1) {
-					hits[i] = '-';
+					algoData.hits[i] = '-';
 					//manage / replace
 					if (fill < slotCount) {
 						slots[fill] = referencePattern[i];
@@ -135,13 +164,13 @@ char* runAlgorithm(Algorithm algo) {
 						free(slotsCopy);
 					}
 				} else {
-					hits[i] = '+';
+					algoData.hits[i] = '+';
 					useTicks[pageIndex]++;
 				}
 				break;
 			case LRU:
 				if (pageIndex == -1) {
-					hits[i] = '-';
+					algoData.hits[i] = '-';
 					//manage / replace
 					if (fill < slotCount) {
 						slots[fill] = referencePattern[i];
@@ -151,14 +180,14 @@ char* runAlgorithm(Algorithm algo) {
 						slots[indexLRU(slots,i)] = referencePattern[i];
 					}
 				} else {
-					hits[i] = '+';
+					algoData.hits[i] = '+';
 				}
 				break;
 			case MIN:
 				break;
 			case MRU:
 				if (pageIndex == -1) {
-					hits[i] = '-';
+					algoData.hits[i] = '-';
 					//manage / replace
 					if (fill < slotCount) {
 						slots[fill] = referencePattern[i];
@@ -168,15 +197,18 @@ char* runAlgorithm(Algorithm algo) {
 						slots[indexMRU(slots,i)] = referencePattern[i];
 					}
 				} else {
-					hits[i] = '+';
+					algoData.hits[i] = '+';
 				}
 				break;
 			case RAND:
 				break;
 		}
+		for (int sci = 0; sci < slotCount; sci++) {
+			algoData.slotHistory[i][sci] = slots[sci];
+		}
 	}
 	free(slots);
-	return hits;
+	return algoData;
 }
 
 int main() {
@@ -218,13 +250,20 @@ int main() {
 		referencePattern[i] = 'A' + (rand() % uniquePages);
 	}
 
-
-	hitBuffer = runAlgorithm(FIFO);
-	hitBuffer = runAlgorithm(LRU);
-	hitBuffer = runAlgorithm(LFU);
-	hitBuffer = runAlgorithm(MRU);
-	//hitBuffer = runAlgorithm(MIN);
-	//hitBuffer = runAlgorithm(RAND);
+	runBuffer dataFIFO = runAlgorithm(FIFO);
+	runBuffer dataLRU = runAlgorithm(LRU);
+	runBuffer dataLFU = runAlgorithm(LFU);
+	runBuffer dataMRU = runAlgorithm(MRU);
+	//runBuffer dataMIN = runAlgorithm(MIN);
+	//runBuffer dataRAND = runAlgorithm(RAND);
+	
+	int terminalWidth = getTerminalWidth() - 10; // Subtract space for names?
+	int sectionCount = patternLength / terminalWidth; // Recquired for wrap handle as per assignment specifications.
+	for (int x = 0; x < sectionCount; x++) {
+		for (int y = 0; y < terminalWidth; y++) {
+			//((y*terminalWidth) + x)
+		}
+	}
 
 	free(referencePattern);
 	free(hitBuffer);
