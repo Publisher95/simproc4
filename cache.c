@@ -43,6 +43,10 @@ char* runAlgorithm(Algorithm algo) {
 	int pageIndex = -1;
 	char *slots = (char *)malloc(patternLength*sizeof(char));
 	char *hits = (char *)malloc(patternLength*sizeof(char));
+	if (hits == NULL || slots == NULL) {
+		printf("Memory allocation error.");
+		return NULL;
+	}
 	// Algo specific setup:
 	switch (algo) {
 		case FIFO:
@@ -62,6 +66,12 @@ char* runAlgorithm(Algorithm algo) {
 		pageIndex = checkHit(referencePattern[i],slots);
 		switch (algo) {
 			case FIFO:
+				if (pageIndex == -1) {
+					hits[i] = '-';
+					//manage
+				} else {
+					hits[i] = '+';
+				}
 				break;
 			case LRU:
 				break;
@@ -109,10 +119,9 @@ int main() {
 
 	srand(seed);
 	referencePattern = (char *)malloc(patternLength*sizeof(char));
-	//hitBuffer = (char *)malloc(patternLength*sizeof(char));
-	if (referencePattern == NULL || hitBuffer == NULL) {
+	if (referencePattern == NULL) {
 		printf("Memory allocation error.");
-		return -1;
+		return 1;
 	}
 
 	for (int i = 0; i < patternLength; i++) {
