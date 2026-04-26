@@ -27,17 +27,58 @@ char pageLetters[] = "ABCDEFGHIJKLMNO";
 int patternLength, uniquePages, slotCount, seed;
 char *referencePattern, *hitBuffer;
 
+int checkHit(char pageID, char* slots) {
+	// Returns -1 if not found
+	int i = 0;
+	while (slots[i] != '\0') {
+		if (slots[i] == pageID) {
+			return i;
+		}
+		i++;
+	}
+	return -1;
+}
+
 char* runAlgorithm(Algorithm algo) {
+	int pageIndex = -1;
 	char *slots = (char *)malloc(patternLength*sizeof(char));
 	char *hits = (char *)malloc(patternLength*sizeof(char));
+	// Algo specific setup:
+	switch (algo) {
+		case FIFO:
+			break;
+		case LRU:
+			break;
+		case LFU:
+			break;
+		case MIN:
+			break;
+		case MRU:
+			break;
+		case RAND:
+			break;
+	}
 	for (int i = 0; i < patternLength; i++) {
-
+		pageIndex = checkHit(referencePattern[i],slots);
+		switch (algo) {
+			case FIFO:
+				break;
+			case LRU:
+				break;
+			case LFU:
+				break;
+			case MIN:
+				break;
+			case MRU:
+				break;
+			case RAND:
+				break;
+		}
 	}
 	return hits;
 }
 
 int main() {
-	
 	printf("Enter page reference pattern length: ");
 	scanf("%d", &patternLength);
 	while(patternLength > MAX || patternLength < 10){
