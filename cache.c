@@ -68,6 +68,30 @@ int checkHit(char pageID, char* slots) {
 	return -1;
 }
 
+
+int indexMIN(char* slots, int startIndex){
+	int patternSize = sizeof(referencePattern)/sizeof(referencePattern[0]);
+
+	int slotCounter[slotCount];
+	for (int i = startIndex; i < patternSize; i++) {
+		for (int si = 0; si < slotCount; si++) {
+			if (slots[si] == referencePattern[i]) {
+				slotCounter[si]++;
+			}
+		}
+	}
+	// this is ok because we guarantee arrays more than 3 min 
+	int returnIndex = 0 ;
+	for(int i = 1; i < slotCount; i++){
+		if(slotCounter[returnIndex] > slotCounter[i]){
+			returnIndex = i;
+		}
+	}
+	return returnIndex;
+}
+
+
+
 int indexLRU(char* slots, int startIndex) {
 	for (int i = 0; i < startIndex; i++) {
 		for (int si = 0; si < slotCount; si++) {
@@ -184,6 +208,17 @@ runBuffer runAlgorithm(Algorithm algo) {
 				}
 				break;
 			case MIN:
+				if(pageIndex == -1){
+					algoData.hits[i] = '-';
+					if(fill < slotCount){
+						slots[fill] = referencePattern[i];
+						fill++;
+					} else {
+						slots[indexMIN(slots, i)] = referencePattern[i];
+					}
+				}else {
+					algoData.hits[i] = '+';
+				}
 				break;
 			case MRU:
 				if (pageIndex == -1) {
@@ -202,7 +237,7 @@ runBuffer runAlgorithm(Algorithm algo) {
 				break;
 			case RAND:
 				if(pageIndex == -1){
-					hits[i] = '-';
+					algoData.hits[i] = '-';
 					if(fill < slotCount){
 						slots[fill] = referencePattern[i];
 						fill++;
@@ -210,7 +245,7 @@ runBuffer runAlgorithm(Algorithm algo) {
 						slots[(rand() % slotCount)] = referencePattern[i];
 					}
 				} else { 
-					hits[i] = '+';
+					algoData.hits[i] = '+';
 				}
 				break;
 		}
@@ -239,7 +274,7 @@ int main() {
 		scanf("%d", &uniquePages);
 	}
 
-	printf("Enter number of slotCount: ");
+	printf("Enter number of slots: ");
 	scanf("%d", &slotCount);
 	while(slotCount < 2 || slotCount > MAX_SLOTS){
 		printf("Invalid input\n");
@@ -265,8 +300,8 @@ int main() {
 	runBuffer dataLRU = runAlgorithm(LRU);
 	runBuffer dataLFU = runAlgorithm(LFU);
 	runBuffer dataMRU = runAlgorithm(MRU);
-	//runBuffer dataMIN = runAlgorithm(MIN);
-	//runBuffer dataRAND = runAlgorithm(RAND);
+	runBuffer dataMIN = runAlgorithm(MIN);
+	runBuffer dataRAND = runAlgorithm(RAND);
 	
 	int terminalWidth = getTerminalWidth() - 10; // Subtract space for names?
 	int sectionCount = patternLength / terminalWidth; // Recquired for wrap handle as per assignment specifications.
