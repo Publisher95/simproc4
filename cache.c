@@ -297,19 +297,223 @@ int main() {
 	}
 
 	runBuffer dataFIFO = runAlgorithm(FIFO);
-	runBuffer dataLRU = runAlgorithm(LRU);
-	runBuffer dataLFU = runAlgorithm(LFU);
-	runBuffer dataMRU = runAlgorithm(MRU);
-	runBuffer dataMIN = runAlgorithm(MIN);
-	runBuffer dataRAND = runAlgorithm(RAND);
-	
-	int terminalWidth = getTerminalWidth() - 10; // Subtract space for names?
-	int sectionCount = patternLength / terminalWidth; // Recquired for wrap handle as per assignment specifications.
-	for (int x = 0; x < sectionCount; x++) {
-		for (int y = 0; y < terminalWidth; y++) {
-			//((y*terminalWidth) + x)
+	int countFIFO = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataFIFO.hits[i] == '+') {
+			countFIFO++;
 		}
 	}
+	runBuffer dataLRU = runAlgorithm(LRU);
+	int countLRU = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataLRU.hits[i] == '+') {
+			countLRU++;
+		}
+	}
+	runBuffer dataLFU = runAlgorithm(LFU);
+	int countLFU = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataLFU.hits[i] == '+') {
+			countLFU++;
+		}
+	}
+	runBuffer dataMRU = runAlgorithm(MRU);
+	int countMRU = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataMRU.hits[i] == '+') {
+			countMRU++;
+		}
+	}
+	runBuffer dataMIN = runAlgorithm(MIN);
+	int countMIN = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataMIN.hits[i] == '+') {
+			countMIN++;
+		}
+	}
+	runBuffer dataRAND = runAlgorithm(RAND);
+	int countRAND = 0;
+	for(int i = 0; i<patternLength;i++) {
+		if (dataRAND.hits[i] == '+') {
+			countRAND++;
+		}
+	}
+	
+	int terminalWidth = getTerminalWidth() - 10; // Subtract space for names?
+	int sectionCount = (patternLength + ((10+(terminalWidth))/2) - 1) / ((10+(terminalWidth))/2);
+	for (int x = 0; x < sectionCount; x++) {
+		printf("Page Wrap %d:\n",x);
+		printf("%10s","Ref Str:  ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = referencePattern[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+
+		for (int i = 0; i < slotCount; i++) {
+			printf("%5s %2d: ", "FIFO", i);
+			for (int y = 0; y < (terminalWidth/2); y++) {
+				if (((x*(terminalWidth/2))+y) < patternLength) {
+					char current = dataFIFO.slotHistory[(x*(terminalWidth/2))+y][i];
+					if (current == '\0') {
+						current = ' ';
+					}
+					printf("%c ",current);
+				}
+			}
+			printf("\n");
+		}
+		printf("%9s","          ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = dataFIFO.hits[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+		
+		for (int i = 0; i < slotCount; i++) {
+			printf("%5s %2d: ", "LRU", i);
+			for (int y = 0; y < (terminalWidth/2); y++) {
+				if (((x*(terminalWidth/2))+y) < patternLength) {
+					char current = dataLRU.slotHistory[(x*(terminalWidth/2))+y][i];
+					if (current == '\0') {
+						current = ' ';
+					}
+					printf("%c ",current);
+				}
+			}
+			printf("\n");
+		}
+		printf("%9s","          ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = dataLRU.hits[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+
+
+        for (int i = 0; i < slotCount; i++) {
+			printf("%5s %2d: ", "LFU", i);
+			for (int y = 0; y < (terminalWidth/2); y++) {
+				if (((x*(terminalWidth/2))+y) < patternLength) {
+					char current = dataLFU.slotHistory[(x*(terminalWidth/2))+y][i];
+					if (current == '\0') {
+						current = ' ';
+					}
+					printf("%c ",current);
+				}
+			}
+			printf("\n");
+		}
+		printf("%9s","          ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = dataLFU.hits[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+		
+		for (int i = 0; i < slotCount; i++) {
+			printf("%5s %2d: ", "MRU", i);
+			for (int y = 0; y < (terminalWidth/2); y++) {
+				if (((x*(terminalWidth/2))+y) < patternLength) {
+					char current = dataMRU.slotHistory[(x*(terminalWidth/2))+y][i];
+					if (current == '\0') {
+						current = ' ';
+					}
+					printf("%c ",current);
+				}
+			}
+			printf("\n");
+		}
+		printf("%9s","          ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = dataMRU.hits[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+		
+		for (int i = 0; i < slotCount; i++) {
+			printf("%5s %2d: ", "MIN", i);
+			for (int y = 0; y < (terminalWidth/2); y++) {
+				if (((x*(terminalWidth/2))+y) < patternLength) {
+					char current = dataMIN.slotHistory[(x*(terminalWidth/2))+y][i];
+					if (current == '\0') {
+						current = ' ';
+					}
+					printf("%c ",current);
+				}
+			}
+			printf("\n");
+		}
+		printf("%9s","          ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = dataMIN.hits[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+		
+		for (int i = 0; i < slotCount; i++) {
+			printf("%5s %2d: ", "RAND", i);
+			for (int y = 0; y < (terminalWidth/2); y++) {
+				if (((x*(terminalWidth/2))+y) < patternLength) {
+					char current = dataRAND.slotHistory[(x*(terminalWidth/2))+y][i];
+					if (current == '\0') {
+						current = ' ';
+					}
+					printf("%c ",current);
+				}
+			}
+			printf("\n");
+		}
+		printf("%9s","          ");
+		for (int y = 0; y < (terminalWidth/2); y++) {
+			if (((x*(terminalWidth/2))+y) < patternLength) {
+				char current = dataRAND.hits[(x*(terminalWidth/2))+y];
+				if (current == '\0') {
+					current = ' ';
+				}
+				printf("%c ",current);
+			}
+		}
+		printf("\n\n");
+	}
+
+	printf("Cache Hit Rates:\n");
+	printf("FIFO : %d / %d = %f\n",countFIFO,patternLength,(double)((double)countFIFO/(double)patternLength));
+	printf("LRU  : %d / %d = %f\n",countLRU,patternLength,(double)((double)countLRU/(double)patternLength));
+	printf("LFU  : %d / %d = %f\n",countLFU,patternLength,(double)((double)countLFU/(double)patternLength));
+	printf("MRU  : %d / %d = %f\n",countMRU,patternLength,(double)((double)countMRU/(double)patternLength));
+	printf("MIN  : %d / %d = %f\n",countMIN,patternLength,(double)((double)countMIN/(double)patternLength));
+	printf("RAND : %d / %d = %f\n",countRAND,patternLength,(double)((double)countRAND/(double)patternLength));
 
 	free(referencePattern);
 	free(hitBuffer);
