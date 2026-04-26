@@ -172,6 +172,17 @@ char* runAlgorithm(Algorithm algo) {
 				}
 				break;
 			case RAND:
+				if(pageIndex == -1){
+					hits[i] = '-';
+					if(fill < slotCount){
+						slots[fill] = referencePattern[i];
+						fill++;
+					} else { 
+						slots[(rand() % slotCount)] = referencePattern[i];
+					}
+				} else { 
+					hits[i] = '+';
+				}
 				break;
 		}
 	}
@@ -200,7 +211,7 @@ int main() {
 	scanf("%d", &slotCount);
 	while(slotCount < 2 || slotCount > MAX_SLOTS){
 		printf("Invalid input\n");
-		printf("Enter number of slotCount: ");
+		printf("Enter number of slots: ");
 		scanf("%d", &slotCount);
 	}
 
@@ -224,7 +235,7 @@ int main() {
 	hitBuffer = runAlgorithm(LFU);
 	hitBuffer = runAlgorithm(MRU);
 	//hitBuffer = runAlgorithm(MIN);
-	//hitBuffer = runAlgorithm(RAND);
+	hitBuffer = runAlgorithm(RAND);
 
 	free(referencePattern);
 	free(hitBuffer);
