@@ -13,11 +13,28 @@
 #define MAX_PAGES 15
 #define MAX_SLOTS 12
 
+// Global data
+typedef enum {
+	FIFO,
+	LRU,
+	LFU,
+	MIN,
+	MRU,
+	RAND
+} Algorithm;
+
 char pageLetters[] = "ABCDEFGHIJKLMNO";
 int patternLength, uniquePages, slotCount, seed;
 char *referencePattern, *hitBuffer;
 
-//int clearHitBuffer
+char* runAlgorithm(Algorithm algo) {
+	char *slots = (char *)malloc(patternLength*sizeof(char));
+	char *hits = (char *)malloc(patternLength*sizeof(char));
+	for (int i = 0; i < patternLength; i++) {
+
+	}
+	return hits;
+}
 
 int main() {
 	
@@ -49,18 +66,24 @@ int main() {
 	scanf("%d", &seed);
 
 	srand(seed);
-	referencePattern = (char*)malloc(patternLength*sizeof(char));
-	hitBuffer = (char*)malloc(patternLength*sizeof(char));
+	referencePattern = (char *)malloc(patternLength*sizeof(char));
+	//hitBuffer = (char *)malloc(patternLength*sizeof(char));
 	if (referencePattern == NULL || hitBuffer == NULL) {
 		printf("Memory allocation error.");
 		return -1;
 	}
 
-	for (int i = 0; i < MAX; i++) {
+	for (int i = 0; i < patternLength; i++) {
 		referencePattern[i] = 'A' + (rand() % uniquePages);
 	}
 
-	
+	//// here
+	hitBuffer = runAlgorithm(FIFO);
+	hitBuffer = runAlgorithm(LRU);
+	hitBuffer = runAlgorithm(LFU);
+	hitBuffer = runAlgorithm(MIN);
+	hitBuffer = runAlgorithm(MRU);
+	hitBuffer = runAlgorithm(RAND);
 
 	free(referencePattern);
 	free(hitBuffer);
