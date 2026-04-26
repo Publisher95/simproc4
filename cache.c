@@ -39,29 +39,55 @@ int checkHit(char pageID, char* slots) {
 	return -1;
 }
 
+int indexLRU(char* slots, int startIndex) {
+	for (int i = 0; i < startIndex; i++) {
+		for (int si = 0; si < slotCount; si++) {
+			if (slots[si] == referencePattern[i]) {
+				return si;
+			}
+		}
+	}
+	// This should never happen.
+	return 0;
+}
+
 char* runAlgorithm(Algorithm algo) {
 	int pageIndex = -1;
-	char *slots = (char *)malloc(patternLength*sizeof(char));
+	char *slots = (char *)malloc(slotCount*sizeof(char));
+	int *useTicks = (int *)malloc(slotCount*sizeof(int));
 	char *hits = (char *)malloc(patternLength*sizeof(char));
-	if (hits == NULL || slots == NULL) {
+	if (hits == NULL || slots == NULL || useTicks == NULL) {
 		printf("Memory allocation error.");
 		return NULL;
 	}
+	for (int i = 0; i < patternLength; i++) {
+		hits[i] = '\0';
+	}
 	int fill = 0;
+	for (int i = 0; i < slotCount; i++) {
+		slots[i] = '\0'; // Make sure to clear
+		useTicks[i] = 0;
+	}
 	// Algo specific setup:
+	printf("Running ");
 	switch (algo) {
 		case FIFO:
-			fill = 0;
+			printf("FIFO:\n");
 			break;
 		case LRU:
+			printf("LRU:\n");
 			break;
 		case LFU:
+			printf("LFU:\n");
 			break;
 		case MIN:
+			printf("MIN:\n");
 			break;
 		case MRU:
+			printf("MRU:\n");
 			break;
 		case RAND:
+			printf("RAND:\n");
 			break;
 	}
 	for (int i = 0; i < patternLength; i++) {
@@ -91,9 +117,45 @@ char* runAlgorithm(Algorithm algo) {
 					hits[i] = '+';
 				}
 				break;
-			case LRU:
-				break;
 			case LFU:
+				if (pageIndex == -1) {
+					hits[i] = '-';
+					//manage / replace
+					if (fill < slotCount) {
+						slots[fill] = referencePattern[i];
+						useTicks[fill] = 1;
+						fill++;
+					} else {
+						// 12345
+						int lowest = patternLength; // Theoretical max if every single char was a reference.
+						int lowestIndex = -1;
+						for (int fi = 0; fi < fill; fi++) {
+							if (slots[fi] = lowest) {
+								// Break tie using LRU
+							} else if (slots[fi] < lowest) {
+								// Norm
+							}
+						}
+					}
+				} else {
+					hits[i] = '+';
+					useTicks[pageIndex]++;
+				}
+				break;
+			case LRU:
+				if (pageIndex == -1) {
+					hits[i] = '-';
+					//manage / replace
+					if (fill < slotCount) {
+						slots[fill] = referencePattern[i];
+						fill++;
+					} else {
+						// Replace
+						slots[indexLRU(slots,i)] = referencePattern[i];
+					}
+				} else {
+					hits[i] = '+';
+				}
 				break;
 			case MIN:
 				break;
@@ -150,8 +212,12 @@ int main() {
 	hitBuffer = runAlgorithm(FIFO);
 	printf("%s\n",referencePattern);
 	printf("%s\n",hitBuffer);
-	//hitBuffer = runAlgorithm(LRU);
 	//hitBuffer = runAlgorithm(LFU);
+	//printf("%s\n",referencePattern);
+	//printf("%s\n",hitBuffer);
+	hitBuffer = runAlgorithm(LRU);
+	printf("%s\n",referencePattern);
+	printf("%s\n",hitBuffer);
 	//hitBuffer = runAlgorithm(MIN);
 	//hitBuffer = runAlgorithm(MRU);
 	//hitBuffer = runAlgorithm(RAND);
