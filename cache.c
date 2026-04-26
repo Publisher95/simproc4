@@ -75,6 +75,7 @@ char* runAlgorithm(Algorithm algo) {
 				break;
 		}
 	}
+	free(slots);
 	return hits;
 }
 
